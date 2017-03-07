@@ -9,8 +9,8 @@ class Archiver:
         self.config = config
         self.es = Elasticsearch(config.get("elasticsearch")["hosts"])
         self.max_indices = config.get("graylog")["max_indices"]
-        self.backup_dir = config.get("backup")["directory"]
-        self.rsync_args = config.get("backup")["rsync"]
+        self.backup_dir = config.get("backup")["local"]
+        self.rsync_args = config.get("backup")["remote"]
 
     def indices(self):
         indices = self.es.search()["hits"]["hits"]
