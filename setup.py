@@ -3,9 +3,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='Graylog Archiver',
+    name='graylog-archiver',
     version='0.1.0',
-    description='Archives Graylog closed indices with rsync.',
+    description='Archives graylog indices based in their age to a remote server', #noqa
     entry_points={"console_scripts": ['graylog-archiver = graylog_archiver.cli:main']}, #noqa
     author='André Freitas',
     author_email='andre.freitas@ndrive.com',
