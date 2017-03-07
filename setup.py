@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='Graylog Archiver',
-    version='1.0',
+    version='0.1.0',
     description='Archives Graylog closed indices with rsync.',
     entry_points={"console_scripts": ['graylog-archiver = graylog_archiver.cli:main']}, #noqa
     author='André Freitas',
