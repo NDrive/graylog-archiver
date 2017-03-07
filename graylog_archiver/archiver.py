@@ -1,4 +1,6 @@
 import subprocess
+import logging
+
 from elasticsearch import Elasticsearch
 
 
@@ -17,7 +19,7 @@ class Archiver:
 
     def indices_to_delete(self):
         indices = self.indices()
-        indices.sort(key=lambda i: i["_index"])
+        indices.sort(key=lambda i: i["_index"], reverse=True)
         filtered = indices[self.max_indices:]
         return list(map(lambda i: i["_index"], filtered))
 
@@ -38,7 +40,7 @@ class Archiver:
         }
         self.es.snapshot.create_repository(repository, definition)
 
-    def create_backup(self, index):
+    def backup(self, index):
         repository = self.repository_name(index)
         snapshot = "snapshot"
         definition = {
@@ -48,7 +50,7 @@ class Archiver:
         }
         self.es.snapshot.create(repository, snapshot, definition)
 
-    def compress_index(self, index):
+    def compress_backup(self, index):
         path = self.backup_path(index)
         cmd = "tar czvf {0}.tar.gz {0}".format(path)
         subprocess.run(cmd, shell=True, check=True)
@@ -58,10 +60,21 @@ class Archiver:
         cmd = "rsync {0} {1}".format(path, self.rsync_args)
         subprocess.run(cmd, shell=True, check=True)
 
+    def delete_index(self, index):
+        self.es.indices.delete(index)
+
+    def delete_backup(self, index):
+        path = self.backup_path(index)
+        cmd = "rm -rf {0}.tar.gz {0}".format(path)
+        subprocess.run(cmd, shell=True, check=True)
+
     def archive(self):
         indices_to_delete = self.indices_to_delete()
+        logging.debug("Indices to delete: %s" % indices_to_delete)
         for index in indices_to_delete:
             self.create_backup_repository(index)
-            self.create_backup(index)
-            self.compress_index(index)
+            self.backup(index)
+            self.compress_backup(index)
             self.rsync(index)
+            self.delete_index(index)
+            self.delete_backup(index)

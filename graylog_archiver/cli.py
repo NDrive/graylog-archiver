@@ -4,6 +4,7 @@ from elasticsearch import Elasticsearch
 
 from .archiver import Archiver
 from .config import Config
+from .logs import configure_logs
 
 
 def to_elasticsearch(hosts):
@@ -17,8 +18,8 @@ def parse():
 
     parser.add_argument(
         '--file', '-f',
-        help='YML Configuration file',
-        default="graylog_archiver.yml"
+        help='JSON Configuration file',
+        default="graylog_archiver.json"
     )
 
     args = parser.parse_args()
@@ -27,6 +28,7 @@ def parse():
 
 def main():
     args = parse()
+    configure_logs()
     config = Config(args.file)
     archiver = Archiver(config)
     archiver.archive()
