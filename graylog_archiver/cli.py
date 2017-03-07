@@ -4,7 +4,7 @@ from elasticsearch import Elasticsearch
 
 from .archiver import Archiver
 from .config import Config
-from .logs import configure_logs
+from .logs import create_logger
 
 
 def to_elasticsearch(hosts):
@@ -28,9 +28,9 @@ def parse():
 
 def main():
     args = parse()
-    configure_logs()
+    logger = create_logger()
     config = Config(args.file)
-    archiver = Archiver(config)
+    archiver = Archiver(logger, config)
     archiver.archive()
 
 

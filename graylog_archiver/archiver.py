@@ -1,27 +1,21 @@
 import subprocess
-import logging
 
 from elasticsearch import Elasticsearch
 
 
 class Archiver:
-    def __init__(self, config):
+    def __init__(self, logger, config):
+        self.logger = logger
         self.config = config
         self.es = Elasticsearch(config.get("elasticsearch")["hosts"])
         self.max_indices = config.get("graylog")["max_indices"]
         self.backup_dir = config.get("backup")["local"]
         self.rsync_args = config.get("backup")["remote"]
 
-    def indices(self):
-        indices = self.es.search()["hits"]["hits"]
-        indices = filter(lambda i: "graylog" in i["_index"], indices)
-        return list(indices)
-
     def indices_to_delete(self):
-        indices = self.indices()
-        indices.sort(key=lambda i: i["_index"], reverse=True)
-        filtered = indices[self.max_indices:]
-        return list(map(lambda i: i["_index"], filtered))
+        indices = list(self.es.indices.get_mapping().keys())
+        indices.sort(reverse=True)
+        return indices[self.max_indices:]
 
     def repository_name(self, index):
         return "graylog_backup_repository_" + index
@@ -70,7 +64,6 @@ class Archiver:
 
     def archive(self):
         indices_to_delete = self.indices_to_delete()
-        logging.debug("Indices to delete: %s" % indices_to_delete)
         for index in indices_to_delete:
             self.create_backup_repository(index)
             self.backup(index)
@@ -78,3 +71,4 @@ class Archiver:
             self.rsync(index)
             self.delete_index(index)
             self.delete_backup(index)
+            self.logger.info("Archived %s" % index)
