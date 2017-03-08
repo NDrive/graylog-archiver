@@ -1,4 +1,4 @@
-# Graylog-archiver
+# Graylog Archiver
 Archives graylog indices to `backup_dir`, keeping the latest ones (`max_indices`).
 
 For example, if you have the following indices:
