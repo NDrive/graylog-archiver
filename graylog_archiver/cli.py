@@ -26,7 +26,8 @@ def main():
     archiver = GraylogArchiver(
         es=Elasticsearch(**args.config.get("elasticsearch")),
         max_indices=args.config.get("max_indices"),
-        backup_dir=args.config.get("backup_dir")
+        backup_dir=args.config.get("backup_dir"),
+        delete=args.config.get("delete")
     )
 
     archiver.archive()

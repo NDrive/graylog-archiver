@@ -17,10 +17,8 @@ class GraylogElasticsearch:
         indices_sorted = sorted(self.indices(), reverse=True)
         return indices_sorted[self.max_indices:]
 
-    def create_backup_repository(self, location):
-        repository = utils.random_string()
-
-        self.es.snapshot.create_repository(
+    def create_backup_repository(self, repository, location):
+        return self.es.snapshot.create_repository(
             repository,
             {
                 "type": "fs",
@@ -31,25 +29,28 @@ class GraylogElasticsearch:
             }
 
         )
-        return repository
 
     def snapshot_is_done(self, repository, snapshot):
         response = self.es.snapshot.status(repository, snapshot)
         return response["snapshots"][0]["state"] == "SUCCESS"
 
+    def delete_index(self, index):
+        return self.es.indices.delete(index)
+
     def dump(self, index):
         location = os.path.join(self.backup_dir, index)
-        repository = self.create_backup_repository(location)
+        backup_repository = utils.random_string()
 
+        self.create_backup_repository(backup_repository, location)
         self.es.snapshot.create(
-            repository,
+            backup_repository,
             "snapshot",
             {"indices": index}
         )
 
-        while not self.snapshot_is_done(repository, "snapshot"):
+        while not self.snapshot_is_done(backup_repository, "snapshot"):
             time.sleep(1)
 
-        self.es.snapshot.delete_repository(repository)
+        self.es.snapshot.delete_repository(backup_repository)
 
         return location

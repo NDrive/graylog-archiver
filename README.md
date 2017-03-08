@@ -1,5 +1,5 @@
 # Graylog-archiver
-Archives graylog indices to `backup_dir` , keeping the latest ones (`max_indices`).
+Archives graylog indices to `backup_dir`, keeping the latest ones (`max_indices`).
 
 For example, if you have the following indices:
 
@@ -32,11 +32,15 @@ Create a configuration file for graylog archiver `graylog_archiver.json`:
     "hosts": "localhost"
   },
   "max_indices": 3,
-  "backup_dir": "/srv/backups/elasticsearch/graylog"
+  "backup_dir": "/srv/backups/elasticsearch/graylog",
+  "delete": false
 }
 ```
-
 
 Run with:
 
     graylog-archiver
+
+Use your strategy to backup:
+
+    rsync -r --remove-source-files /srv/backups/elasticsearch/graylog backups@backups.company.com:/srv/backups/graylog
