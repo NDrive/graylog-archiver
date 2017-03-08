@@ -1,25 +1,19 @@
 import argparse
-
 from elasticsearch import Elasticsearch
-
-from .archiver import Archiver
-from .config import Config
-from .logs import create_logger
-
-
-def to_elasticsearch(hosts):
-    return Elasticsearch(hosts.split(","))
+from graylog_archiver.graylog_archiver import GraylogArchiver
+from graylog_archiver.config import Config, default_configuration_file
 
 
 def parse():
     parser = argparse.ArgumentParser(
-        description="Archives Graylog closed indices with rsync."
+        description="Archives Graylog logs to a local directory."
     )
 
     parser.add_argument(
-        '--file', '-f',
-        help='JSON Configuration file',
-        default="graylog_archiver.json"
+        '--config', '-c',
+        help='JSON configuration file. Defaults to graylog_archiver.json or ~/graylog_archiver.json', # noqa
+        default=Config(default_configuration_file()),
+        type=Config
     )
 
     args = parser.parse_args()
@@ -28,9 +22,13 @@ def parse():
 
 def main():
     args = parse()
-    logger = create_logger()
-    config = Config(args.file)
-    archiver = Archiver(logger, config)
+
+    archiver = GraylogArchiver(
+        es=Elasticsearch(**args.config.get("elasticsearch")),
+        max_indices=args.config.get("max_indices"),
+        backup_dir=args.config.get("backup_dir")
+    )
+
     archiver.archive()
 
 

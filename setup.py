@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 setup(
     name='graylog-archiver',
     version='0.1.0',
-    description='Archives graylog indices based in their age to a remote server', #noqa
+    description='Archives graylog indices.', #noqa
     entry_points={"console_scripts": ['graylog-archiver = graylog_archiver.cli:main']}, #noqa
     author='André Freitas',
     author_email='andre.freitas@ndrive.com',
@@ -13,6 +13,7 @@ setup(
     license='MIT',
     packages=find_packages('.'),
     install_requires=[
-        "elasticsearch==5.2.0"
+        "elasticsearch==5.2.0",
+        "invoke==0.15.0"
     ]
 )
