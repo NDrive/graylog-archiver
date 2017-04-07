@@ -1,7 +1,7 @@
 import argparse
 from elasticsearch import Elasticsearch
 from graylog_archiver.graylog_archiver import GraylogArchiver
-from graylog_archiver.config import Config, default_configuration_file
+from graylog_archiver.config import Config
 
 
 def parse():
@@ -11,9 +11,9 @@ def parse():
 
     parser.add_argument(
         '--config', '-c',
-        help='JSON configuration file. Defaults to graylog_archiver.json or ~/graylog_archiver.json', # noqa
-        default=Config(default_configuration_file()),
-        type=Config
+        help='JSON configuration file',
+        type=Config,
+        required=True
     )
 
     args = parser.parse_args()

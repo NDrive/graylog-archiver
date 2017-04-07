@@ -1,0 +1,26 @@
+version: "2"
+services:
+  mongo:
+    image: mongo:3
+  elasticsearch:
+    image: elasticsearch:2
+    command: "elasticsearch -Des.cluster.name='graylog' -Des.path.repo='/srv/containers/elasticsearch_backups'"
+    ports:
+      - "9201:9200"
+    volumes:
+      - "/srv/containers/elasticsearch_backups:/srv/containers/elasticsearch_backups"
+  graylog:
+    image: graylog2/server:2.1.2-1
+    environment:
+      GRAYLOG_PASSWORD_SECRET: 152gQYz8NYozevEr0mTfuuMg3gMMxjy5JiMMujLsLt5kL
+      GRAYLOG_ROOT_PASSWORD_SHA2: 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92 #123456
+      GRAYLOG_WEB_ENDPOINT_URI: http://localhost:9000/api
+    depends_on:
+      - mongo
+      - elasticsearch
+    expose:
+      - 514
+    ports:
+      - "9000:9000"
+      - "12900:12900"
+      - "514:514"

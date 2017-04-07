@@ -44,3 +44,14 @@ Run with:
 Use your strategy to backup:
 
     rsync -r --remove-source-files /srv/backups/elasticsearch/graylog backups@backups.company.com:/srv/backups/graylog
+
+## Test
+Start docker containers:
+
+    cd test && docker-compose up -d
+
+Setup Graylog with an input and send some logs.
+
+Run graylog_archiver with the test configuration:
+
+    graylog-archiver --config test/config.json

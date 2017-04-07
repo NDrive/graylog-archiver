@@ -1,7 +1,17 @@
 import os
 import time
+import re
 
 from graylog_archiver import utils
+
+
+def extract_number(index):
+    return int(re.findall(r'\d+', index)[0])
+
+
+def sort_indices(indices):
+    """Sort indices from the oldest"""
+    return sorted(indices, key=extract_number)
 
 
 class GraylogElasticsearch:
@@ -14,7 +24,7 @@ class GraylogElasticsearch:
         return list(self.es.indices.get_mapping().keys())
 
     def indices_to_archive(self):
-        indices_sorted = sorted(self.indices(), reverse=True)
+        indices_sorted = sort_indices(self.indices())
         return indices_sorted[self.max_indices:]
 
     def create_backup_repository(self, repository, location):
