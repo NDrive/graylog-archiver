@@ -10,8 +10,8 @@ def extract_number(index):
 
 
 def sort_indices(indices):
-    """Sort indices from the oldest"""
-    return sorted(indices, key=extract_number)
+    """Sort indices from the newest to oldest"""
+    return sorted(indices, key=extract_number, reverse=True)
 
 
 class GraylogElasticsearch:
@@ -25,7 +25,7 @@ class GraylogElasticsearch:
 
     def indices_to_archive(self):
         indices_sorted = sort_indices(self.indices())
-        return indices_sorted[self.max_indices:]
+        return indices_sorted[self.max_indices:]  # keeps the max indices
 
     def create_backup_repository(self, repository, location):
         return self.es.snapshot.create_repository(
