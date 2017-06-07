@@ -11,7 +11,9 @@ And `max_indices` is set to 1, it will archive and delete 48 and 47.
 
 ## Install
 
-    pip install graylog-archiver
+Install __Python 3__ and use pip:
+
+    pip3 install graylog-archiver
 
 ## Usage
 Configure `path.repo` in `elasticsearch.yml` to allow the creation of backup
