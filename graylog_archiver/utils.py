@@ -1,5 +1,6 @@
 import uuid
-import invoke
+from shutil import make_archive
+import os
 
 
 def random_string():
@@ -7,6 +8,4 @@ def random_string():
 
 
 def compress_directory(path):
-    cmd = "tar czvf {0}.tar.gz {0}".format(path)
-    invoke.run(cmd, hide=True)
-    return "{0}.tar.gz".format(path)
+    return make_archive(path, 'gztar', path)
