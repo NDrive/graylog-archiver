@@ -1,6 +1,7 @@
 import os
 import time
 import re
+import shutil
 
 from graylog_archiver import utils
 
@@ -51,6 +52,7 @@ class GraylogElasticsearch:
         location = os.path.join(self.backup_dir, index)
         backup_repository = utils.random_string()
 
+        shutil.rmtree(location, ignore_errors=True)
         self.create_backup_repository(backup_repository, location)
         self.es.snapshot.create(
             backup_repository,
