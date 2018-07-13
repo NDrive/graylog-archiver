@@ -1,6 +1,5 @@
 import uuid
 from shutil import make_archive
-import os
 
 
 def random_string():

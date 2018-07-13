@@ -1,7 +1,7 @@
 import argparse
 from elasticsearch import Elasticsearch
-from graylog_archiver.graylog_archiver import GraylogArchiver
-from graylog_archiver.config import Config
+from .graylog_archiver import GraylogArchiver
+from .config import Config
 
 
 def parse():
