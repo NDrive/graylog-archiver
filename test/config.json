@@ -4,6 +4,7 @@
       {"host" : "localhost", "port": 9201}
     ]
   },
+  "index_prefix": "graylog",
   "max_indices": 1,
   "backup_dir": "/srv/containers/elasticsearch_backups",
   "delete": false

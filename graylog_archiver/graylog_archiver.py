@@ -5,13 +5,14 @@ from graylog_archiver.utils import compress_directory
 
 
 class GraylogArchiver:
-    def __init__(self, es, max_indices, backup_dir, delete=False):
+    def __init__(self, es, index_prefix, max_indices, backup_dir, delete=False):
         self.es = es
+        self.index_prefix = index_prefix
         self.max_indices = max_indices
         self.backup_dir = backup_dir
         self.delete = delete
         self.logger = logs.create_logger()
-        self.graylog = GraylogElasticsearch(es, max_indices, backup_dir)
+        self.graylog = GraylogElasticsearch(es, index_prefix, max_indices, backup_dir)
 
     def archive(self):
         self.logger.info("Indices: %s" % self.graylog.indices())
