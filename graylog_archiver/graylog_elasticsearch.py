@@ -22,7 +22,7 @@ class GraylogElasticsearch:
         self.backup_dir = backup_dir
 
     def indices(self):
-        return filter(lambda x: x.startswith(self.index_prefix), list(self.es.indices.get_mapping().keys()))
+        return list(filter(lambda x: x.startswith(self.index_prefix), list(self.es.indices.get_mapping().keys())))
 
     def indices_to_archive(self):
         indices_sorted = sort_indices(self.indices())
