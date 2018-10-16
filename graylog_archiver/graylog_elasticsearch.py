@@ -15,13 +15,14 @@ def sort_indices(indices):
 
 
 class GraylogElasticsearch:
-    def __init__(self, es, max_indices, backup_dir):
+    def __init__(self, es, index_prefix, max_indices, backup_dir):
         self.es = es
+        self.index_prefix = index_prefix
         self.max_indices = max_indices
         self.backup_dir = backup_dir
 
     def indices(self):
-        return list(self.es.indices.get_mapping().keys())
+        return filter(lambda x: x.startswith(self.index_prefix), list(self.es.indices.get_mapping().keys()))
 
     def indices_to_archive(self):
         indices_sorted = sort_indices(self.indices())
