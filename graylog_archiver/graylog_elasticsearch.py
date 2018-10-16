@@ -2,8 +2,11 @@ import os
 import time
 import re
 import shutil
+from itertools import groupby, chain
 
-from graylog_archiver import utils
+from . import utils
+
+INDEX_NAME_PATTERN = re.compile(r"(\S+)_\d+")
 
 
 def extract_number(index):
@@ -13,6 +16,13 @@ def extract_number(index):
 def sort_indices(indices):
     """Sort indices from the newest to oldest"""
     return sorted(indices, key=extract_number, reverse=True)
+
+
+def group_and_sort_indices(indices):
+    index_sets = [(re.match(INDEX_NAME_PATTERN, x).group(1), x) for x in indices if re.match(INDEX_NAME_PATTERN, x)]
+    return dict(
+        (x[0], sort_indices([y[1] for y in x[1]])) for x in groupby(sorted(index_sets), lambda x: x[0])
+    )
 
 
 class GraylogElasticsearch:
@@ -25,8 +35,9 @@ class GraylogElasticsearch:
         return list(self.es.indices.get_mapping().keys())
 
     def indices_to_archive(self):
-        indices_sorted = sort_indices(self.indices())
-        return indices_sorted[self.max_indices:]  # keeps the max indices
+        indices_sorted = group_and_sort_indices(self.indices())
+        to_be_archieved = [idx[self.max_indices:] for idx in indices_sorted.values()]
+        return list(chain(*to_be_archieved)) # keeps the max indices from each index set
 
     def create_backup_repository(self, repository, location):
         return self.es.snapshot.create_repository(

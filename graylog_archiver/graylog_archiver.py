@@ -1,7 +1,7 @@
 import shutil
-from graylog_archiver import logs
-from graylog_archiver.graylog_elasticsearch import GraylogElasticsearch
-from graylog_archiver.utils import compress_directory
+from . import logs
+from .graylog_elasticsearch import GraylogElasticsearch
+from .utils import compress_directory
 
 
 class GraylogArchiver:
